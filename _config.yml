@@ -1,3 +1,11 @@
 title: Dushyant Basson
-description: Welcome to my fresh GitHub Pages site!
-theme: jekyll-theme-minimal
+description: Tech notes and blog
+
+defaults:
+  -
+    scope:
+      path: ""
+    values:
+      layout: "default"
+
+permalink: /blog/:slug/
