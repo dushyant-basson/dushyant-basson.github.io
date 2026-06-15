@@ -10,14 +10,14 @@
   <style>
     body {
       font-family: 'JetBrains Mono', monospace;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
-      line-height: 1.6;
+      margin: 0;
+      padding: 0;
       color: #333;
+      line-height: 1.6;
     }
     h1, h2, h3, h4, h5, h6 {
       font-family: 'JetBrains Mono', monospace;
+      margin-top: 0;
     }
     a {
       color: #0066cc;
@@ -29,37 +29,142 @@
     .post-list {
       list-style-type: none;
       padding-left: 0;
+      margin-top: 0;
     }
     .post-list li {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
-    header {
+    .post-meta {
+      font-size: 0.8em;
+      color: #888;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .post-link {
+      font-size: 0.95em;
+      line-height: 1.4;
+      display: block;
+    }
+    
+    /* Home Layout */
+    .home-layout {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+    .home-header {
       margin-bottom: 40px;
       border-bottom: 1px dashed #ccc;
       padding-bottom: 20px;
     }
-    header h1 a {
+    .home-header h1 {
+      font-size: 2em;
+    }
+    
+    /* Pane Layout */
+    .pane-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      padding: 40px;
+      border-right: 1px solid #e0e0e0;
+      box-sizing: border-box;
+    }
+    .content {
+      padding: 60px;
+      box-sizing: border-box;
+      max-width: 1000px;
+    }
+    .sidebar header {
+      margin-bottom: 30px;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 20px;
+    }
+    .sidebar header h1 {
+      font-size: 1.5em;
+    }
+    .sidebar header h1 a {
       color: #333;
+    }
+    .sidebar .post-list li {
+      margin-bottom: 12px;
+    }
+    .sidebar .post-meta {
+      font-size: 0.75em;
+    }
+    .sidebar .post-link {
+      font-size: 0.85em;
+    }
+    
+    @media (max-width: 800px) {
+      .pane-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .content {
+        padding: 40px 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    {% if page.url == '/' or page.url == '/index.html' %}
-      <h1><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
-      <p>{{ site.description }}</p>
-    {% else %}
-      <nav style="margin-bottom: 20px;"><a href="{{ '/' | relative_url }}">← {{ site.title }}</a></nav>
-      <h1 style="margin-bottom: 5px;">{{ page.title }}</h1>
-      <p style="color: #666; font-size: 0.9em; margin-top: 0;">
-        {% if page.author %}By {{ page.author }} &bull; {% endif %}
-        {% if page.date %}{{ page.date | date: "%b %-d, %Y" }} &bull; {% endif %}
-        {% if page.tags %}Tags: {{ page.tags | join: ", " }}{% endif %}
-      </p>
-    {% endif %}
-  </header>
-  <main>
-    {{ content }}
-  </main>
+
+  {% if page.url == '/' or page.url == '/index.html' %}
+    <div class="home-layout">
+      <header class="home-header">
+        <h1><a href="{{ '/' | relative_url }}" style="color: #333;">{{ site.title }}</a></h1>
+        <p style="font-size: 0.9em; color: #555;">{{ site.description }}</p>
+      </header>
+      
+      <ul class="post-list">
+        {% for post in site.posts %}
+          <li>
+            <span class="post-meta">{{ post.date | date: "%Y-%m-%d" }}</span>
+            <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+      
+      {{ content }}
+    </div>
+  {% else %}
+    <div class="pane-layout">
+      <aside class="sidebar">
+        <header>
+          <h1><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
+          <p style="font-size: 0.9em; color: #555;">{{ site.description }}</p>
+        </header>
+        
+        <ul class="post-list">
+          {% for post in site.posts %}
+            <li>
+              <span class="post-meta">{{ post.date | date: "%Y-%m-%d" }}</span>
+              <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </aside>
+
+      <main class="content">
+        <header class="post-header" style="margin-bottom: 40px;">
+          <nav style="margin-bottom: 20px;"><a href="{{ '/' | relative_url }}">← Back to all posts</a></nav>
+          <h1 style="margin-bottom: 5px; font-size: 2em;">{{ page.title }}</h1>
+          <p style="color: #666; font-size: 0.9em; margin-top: 0; padding-bottom: 20px; border-bottom: 1px dashed #ccc;">
+            {% if page.author %}By {{ page.author }} &bull; {% endif %}
+            {% if page.date %}{{ page.date | date: "%B %-d, %Y" }} &bull; {% endif %}
+            {% if page.tags %}Tags: {{ page.tags | join: ", " }}{% endif %}
+          </p>
+        </header>
+        
+        {{ content }}
+      </main>
+    </div>
+  {% endif %}
+
 </body>
 </html>
